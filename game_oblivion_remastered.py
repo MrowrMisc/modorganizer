@@ -218,7 +218,7 @@ class OblivionRemasteredModDataChecker(mobase.ModDataChecker):
 
 class OblivionRemasteredGame(BasicGame):
     Name = "Oblivion Remastered Support Plugin"
-    Author = "MO2 Community"
+    Author = "Mrowr Purr"
     Version = "1.0.0"
     
     GameName = "The Elder Scrolls IV: Oblivion Remastered"
@@ -226,12 +226,9 @@ class OblivionRemasteredGame(BasicGame):
     GameNexusName = "oblivionremastered"
     GameNexusId = 7587
     GameSteamId = 2623190
-    # Use the UE5 shipping executable
     GameBinary = "OblivionRemastered.exe"
     GameLauncher = "OblivionRemastered.exe"
-    # Use the UE5 mods directory as the data path
     GameDataPath = "OblivionRemastered/Content"
-    # GameDataPath = "OblivionRemastered/Content/Paks/~mods"
     GameIniFiles = ["Oblivion.ini", "Oblivion_default.ini", "BlendSettings.ini"]
     GameDocumentsDirectory = "%GAME_PATH%/OblivionRemastered/Content/Dev/ObvData"
     GameSaveExtension = "sav"
@@ -279,11 +276,6 @@ class OblivionRemasteredGame(BasicGame):
             return None
         except Exception:
             return None
-    
-    # def documentsDirectory(self):
-    #     """Override the documents directory method to explicitly point to the correct path for INI files."""
-    #     # This is where MO2 will look for INI files
-    #     return QDir(os.path.join(self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData"))
     
     def savesDirectory(self):
         """Override the saves directory method to explicitly point to the correct path."""
