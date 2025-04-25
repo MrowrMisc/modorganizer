@@ -107,10 +107,9 @@ class OblivionRemasteredModDataChecker(mobase.ModDataChecker):
                         dir_name = dir_entry.name()
                         target_dir = mods_dir.addDirectory(dir_name)
                         
-                        # Copy all files from the directory to the target directory
-                        for file_entry in dir_entry:
-                            if file_entry is not None:
-                                target_dir.insert(file_entry, mobase.IFileTree.InsertPolicy.REPLACE)
+                        # Instead of processing files individually, insert the entire directory
+                        # This should ensure all files in the directory are moved correctly
+                        target_dir.insert(dir_entry, mobase.IFileTree.InsertPolicy.MERGE)
             except Exception as e:
                 print(f"Error processing UE5 files: {str(e)}")
         
