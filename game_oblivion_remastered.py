@@ -221,12 +221,12 @@ class OblivionRemasteredGame(BasicGame):
     Version = "1.0.0"
     
     GameName = "The Elder Scrolls IV: Oblivion Remastered"
-    GameShortName = "oblivionremastered"
+    GameShortName = "OblivionRemastered"
     GameNexusName = "oblivionremastered"
     GameNexusId = 7587
     GameSteamId = 2623190
     # Use the UE5 shipping executable
-    GameBinary = "OblivionRemastered/Binaries/Win64/OblivionRemastered-Win64-Shipping.exe"
+    GameBinary = "OblivionRemastered.exe"
     GameLauncher = "OblivionRemastered.exe"
     # Use the UE5 mods directory as the data path
     GameDataPath = "OblivionRemastered/Content"
@@ -235,6 +235,8 @@ class OblivionRemasteredGame(BasicGame):
     GameDocumentsDirectory = "%GAME_PATH%/OblivionRemastered/Content/Dev/ObvData"
     GameSaveExtension = "sav"
     GameSavesDirectory = "%USERPROFILE%\\Documents\\My Games\\Oblivion Remastered\\Saved\\SaveGames"
+    
+    # No need for GameIniPath, we'll use GameDocumentsDirectory instead
     
     def init(self, organizer: mobase.IOrganizer):
         super().init(organizer)
@@ -278,14 +280,9 @@ class OblivionRemasteredGame(BasicGame):
             return None
     
     def documentsDirectory(self):
-        """Override the documents directory method to explicitly point to the correct path."""
-        try:
-            from PyQt6.QtCore import QStandardPaths
-            docs_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
-            game_docs_path = f"{docs_path}/My Games/Oblivion Remastered"
-            return QDir(game_docs_path)
-        except Exception:
-            return super().documentsDirectory()
+        """Override the documents directory method to explicitly point to the correct path for INI files."""
+        # This is where MO2 will look for INI files
+        return QDir(os.path.join(self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData"))
     
     def savesDirectory(self):
         """Override the saves directory method to explicitly point to the correct path."""
@@ -296,15 +293,41 @@ class OblivionRemasteredGame(BasicGame):
         except Exception:
             return super().savesDirectory()
     
+    # Set the correct paths for INI files
+    # The GameDocumentsDirectory is where MO2 will look for the INI files
+    GameDocumentsDirectory = "%GAME_PATH%/OblivionRemastered/Content/Dev/ObvData"
+    
+    # The GameIniFiles is a list of INI file names that MO2 will look for in the GameDocumentsDirectory
+    GameIniFiles = ["Oblivion.ini", "Oblivion_default.ini", "BlendSettings.ini"]
+    
     def listSaves(self, folder: QDir) -> list[mobase.ISaveGame]:
-        """List save games from the game's save directory."""
+        """List save games from the provided folder directory.
+        
+        When profile-specific saves are enabled, folder will be the profile's save directory.
+        When profile-specific saves are disabled, folder will be the game's save directory.
+        """
         ext = self._mappings.savegameExtension.get()
         
-        # Use the game's save directory since that's where the files actually are
-        folder_path = Path(self.savesDirectory().absolutePath())
+        # Use the provided folder parameter, which will be the profile's save directory
+        # when profile-specific saves are enabled
+        folder_path = Path(folder.absolutePath())
         
         # Get current profile name - we'll simply use the profile name as the expected player name
         profile_name = self._organizer.profile().name()
+        
+        # Check if we're using profile-specific saves
+        using_profile_saves = folder_path.name == "saves"
+        
+        # If we're using profile-specific saves but the folder doesn't exist or is empty,
+        # we might need to copy saves from the game directory to the profile directory
+        if using_profile_saves and (not folder_path.exists() or not any(folder_path.glob(f"*.{ext}"))):
+            # Create the directory if it doesn't exist
+            if not folder_path.exists():
+                folder_path.mkdir(parents=True, exist_ok=True)
+            
+            # We could copy saves from the game directory to the profile directory here,
+            # but for now we'll just return an empty list
+            return []
         
         # Check if the directory exists
         if not folder_path.exists():
