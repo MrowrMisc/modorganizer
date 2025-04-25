@@ -21,28 +21,58 @@ class OblivionRemasteredModDataChecker(mobase.ModDataChecker):
         self.ini_files = ["blendsettings.ini", "oblivion.ini", "oblivion_default.ini"]
     
     def dataLooksValid(self, filetree: mobase.IFileTree) -> mobase.ModDataChecker.CheckReturn:
-        # Always return VALID to accept any mod structure
-        return mobase.ModDataChecker.VALID
+        # Always return FIXABLE to ensure the fix method is called
+        return mobase.ModDataChecker.FIXABLE
+    
+    def _contains_ue5_files(self, directory: mobase.IFileTree) -> bool:
+        """
+        Check if a directory contains UE5 files.
+        """
+        if directory is None:
+            return False
+            
+        for entry in directory:
+            if entry is not None and entry.isFile():
+                try:
+                    file_name = entry.name().lower()
+                    file_ext = os.path.splitext(file_name)[1].lower()
+                    if file_ext in self.ue5_extensions:
+                        return True
+                except Exception as e:
+                    print(f"Error checking file {entry.name() if entry else 'unknown'}: {str(e)}")
+        return False
     
     def fix(self, filetree: mobase.IFileTree) -> mobase.IFileTree:
         """
         Restructure the mod to put files in the correct directories.
+        This method is called when dataLooksValid returns FIXABLE.
         """
-        mod_name = filetree.name()
+        # Print a debug message to confirm the fix method is being called
+        print(f"OblivionRemasteredModDataChecker.fix: Restructuring mod {filetree.name()}")
         
         # Check for UE5 files in the root
         ue5_files_in_root = []
         for entry in filetree:
-            if entry.isFile():
+            if entry is not None and entry.isFile():
                 file_name = entry.name().lower()
                 file_ext = os.path.splitext(file_name)[1].lower()
                 if file_ext in self.ue5_extensions:
                     ue5_files_in_root.append(entry)
         
+        # Check for directories in the root that contain UE5 files
+        ue5_dirs_in_root = []
+        for entry in filetree:
+            if entry is not None and entry.isDir():
+                try:
+                    if self._contains_ue5_files(entry):
+                        ue5_dirs_in_root.append(entry)
+                except Exception as e:
+                    print(f"Error checking directory {entry.name() if entry else 'unknown'}: {str(e)}")
+        
         # Check for Bethesda files in the root
         bethesda_files_in_root = []
         for entry in filetree:
-            if entry.isFile():
+            if entry is not None and entry.isFile():
                 file_name = entry.name().lower()
                 file_ext = os.path.splitext(file_name)[1].lower()
                 if file_ext in self.bethesda_extensions:
@@ -51,36 +81,58 @@ class OblivionRemasteredModDataChecker(mobase.ModDataChecker):
         # Check for INI files in the root
         ini_files_in_root = []
         for entry in filetree:
-            if entry.isFile():
+            if entry is not None and entry.isFile():
                 file_name = entry.name().lower()
                 if file_name in self.ini_files:
                     ini_files_in_root.append(entry)
         
-        # If we found any files to move, restructure the mod
-        if ue5_files_in_root or bethesda_files_in_root or ini_files_in_root:
-            # Create the necessary directories
-            if ue5_files_in_root:
+        # Always restructure the mod, even if we didn't find any specific files to move
+        # This ensures that the fix method is always applied
+        
+        # Create the necessary directories for UE5 files
+        if ue5_files_in_root or ue5_dirs_in_root:
+            try:
                 paks_dir = filetree.addDirectory("Paks")
                 mods_dir = paks_dir.addDirectory("~mods")
-                mod_dir = mods_dir.addDirectory(mod_name)
                 
-                # Move UE5 files to Paks/~mods/[mod name]
-                for entry in ue5_files_in_root:
-                    mod_dir.insert(entry, mobase.IFileTree.InsertPolicy.REPLACE)
-            
-            if bethesda_files_in_root or ini_files_in_root:
+                # Move UE5 files directly to Paks/~mods/
+                if ue5_files_in_root:
+                    for entry in ue5_files_in_root:
+                        if entry is not None:
+                            mods_dir.insert(entry, mobase.IFileTree.InsertPolicy.REPLACE)
+                
+                # Move directories containing UE5 files to Paks/~mods/[dir name]
+                for dir_entry in ue5_dirs_in_root:
+                    if dir_entry is not None:
+                        dir_name = dir_entry.name()
+                        target_dir = mods_dir.addDirectory(dir_name)
+                        
+                        # Copy all files from the directory to the target directory
+                        for file_entry in dir_entry:
+                            if file_entry is not None:
+                                target_dir.insert(file_entry, mobase.IFileTree.InsertPolicy.REPLACE)
+            except Exception as e:
+                print(f"Error processing UE5 files: {str(e)}")
+        
+        # Create the necessary directories for Bethesda files and INI files
+        if bethesda_files_in_root or ini_files_in_root:
+            try:
                 dev_dir = filetree.addDirectory("Dev")
                 obvdata_dir = dev_dir.addDirectory("ObvData")
                 
                 # Move INI files to Dev/ObvData
                 for entry in ini_files_in_root:
-                    obvdata_dir.insert(entry, mobase.IFileTree.InsertPolicy.REPLACE)
+                    if entry is not None:
+                        obvdata_dir.insert(entry, mobase.IFileTree.InsertPolicy.REPLACE)
                 
                 # Create Data directory and move Bethesda files there
                 if bethesda_files_in_root:
                     data_dir = obvdata_dir.addDirectory("Data")
                     for entry in bethesda_files_in_root:
-                        data_dir.insert(entry, mobase.IFileTree.InsertPolicy.REPLACE)
+                        if entry is not None:
+                            data_dir.insert(entry, mobase.IFileTree.InsertPolicy.REPLACE)
+            except Exception as e:
+                print(f"Error processing Bethesda files: {str(e)}")
         
         return filetree
 
