@@ -2,88 +2,92 @@
 
 ## Current Work Focus
 
-We are currently in the **planning and initial implementation phase** of developing an MO2 plugin for Oblivion Remaster. The main focus areas are:
+We are currently in the **initial implementation phase with critical issues** of developing an MO2 plugin for Oblivion Remaster. The main focus areas are:
 
-1. **Implementing the Python-based Plugin**
-   - Using the basic_games framework for better portability and flexibility
-   - Creating the core plugin structure
-   - Implementing custom features for the dual modding system
+1. **Fixing Critical Issues**
+   - Resolving the Plugins.txt update issue
+   - Fixing mod state change detection
+   - Improving logging and debugging capabilities
 
-2. **Handling the Dual Modding System**
-   - Implementing support for traditional Bethesda mods (.esp/.bsa)
-   - Implementing support for Unreal Engine 5 mods (.pak/.ucas/.utoc)
-   - Creating a unified interface for managing both mod types
+2. **Enhancing the Dual Modding System**
+   - Refining support for traditional Bethesda mods (.esp/.bsa)
+   - Optimizing support for Unreal Engine 5 mods (.pak/.ucas/.utoc)
+   - Improving handling of hybrid mods
 
-3. **Developing Custom Installers**
-   - Creating mod type detection logic
-   - Implementing proper file placement for each mod type
-   - Handling hybrid mods that contain both traditional and UE5 components
+3. **Implementing Load Order Management**
+   - Developing reliable Plugins.txt management for traditional mods
+   - Creating a system for UE5 mod load order control
+   - Ensuring proper mod conflict resolution
 
 ## Recent Changes
 
-We have made significant progress in understanding the requirements and planning the implementation:
+We have made significant progress in implementing the plugin:
 
-1. **Analyzed Oblivion Remaster's File Structure**
-   - Identified the game installation path: `[Steam Library]\steamapps\common\Oblivion Remastered`
-   - Located the traditional Bethesda mod files path: `OblivionRemastered\Content\Dev\ObvData\Data`
-   - Located the UE5 mod files path: `OblivionRemastered\Content\Paks\~mods`
-   - Identified relevant configuration files: `OblivionRemastered\Content\Dev\ObvData\Oblivion.ini` and others
+1. **Implemented Core Plugin Structure**
+   - Created the main `OblivionRemasteredGame` class
+   - Defined game-specific properties and paths
+   - Set up basic game detection and integration with MO2
+   - Implemented save game handling and INI file management
 
-2. **Researched Modding Approaches**
-   - Confirmed that traditional Bethesda mods use .esp/.bsa files and are managed via Plugins.txt
-   - Confirmed that UE5 mods use .pak/.ucas/.utoc files and are loaded alphabetically from the ~mods folder
-   - Identified that some mods might contain both traditional and UE5 components
+2. **Developed Mod Type Detection and Handling**
+   - Created the `OblivionRemasteredModDataChecker` class
+   - Implemented file extension and structure analysis
+   - Set up proper file placement for each mod type
+   - Added basic handling for hybrid mods
 
-3. **Decided on Implementation Approach**
-   - Selected Python-based approach using the basic_games framework
-   - Designed a system for handling the dual modding nature
-   - Planned custom features for mod type detection and proper file placement
+3. **Implemented Custom Logging**
+   - Created a custom logging system to a file
+   - Added detailed logging for callback registration and execution
+   - Implemented error handling for critical operations
 
-4. **Created Comprehensive Documentation**
-   - Established the project brief with specific requirements
-   - Documented the product context and user experience goals
-   - Outlined the system architecture and key components
-   - Documented the technical context and development setup
-   - Created a detailed implementation plan
+4. **Attempted Callback Implementation**
+   - Tried to implement the `onModStateChanged` callback
+   - Created methods for updating Plugins.txt
+   - Encountered issues with callback triggering
+
+5. **Documented Implementation Details and Issues**
+   - Created detailed documentation of the implementation
+   - Documented critical issues and potential solutions
+   - Established next steps and priorities
 
 ## Next Steps
 
 The immediate next steps in the project are:
 
-1. **Implement Core Plugin Structure**
-   - Create the main `OblivionRemasteredGame` class
-   - Define game-specific properties and paths
-   - Set up basic game detection
+1. **Fix Plugins.txt Update Issue**
+   - Investigate why the Plugins.txt file is not being updated
+   - Explore alternative approaches for detecting mod state changes
+   - Implement a reliable solution for updating Plugins.txt
 
-2. **Develop Mod Type Detection**
-   - Create logic to identify traditional vs. UE5 mods
-   - Implement file extension and structure analysis
-   - Handle hybrid mods that contain both types
+2. **Improve Mod State Change Detection**
+   - Investigate why the `onModStateChanged` callback is not working
+   - Try different callback registration approaches
+   - Consider implementing a polling mechanism as a fallback
 
-3. **Implement Custom Installer**
-   - Create the `OblivionRemasteredInstaller` class
-   - Implement proper file placement for each mod type
-   - Test with various mod formats
+3. **Enhance Logging System**
+   - Improve the custom logging system
+   - Explore integration with MO2's logging system
+   - Add more detailed logging for debugging
 
-4. **Implement Plugin Management**
-   - Create the `OblivionRemasteredPluginManager` class
-   - Implement Plugins.txt handling for traditional mods
-   - Develop load order management for both mod types
+4. **Implement UE5 Load Order Management**
+   - Develop a system for controlling UE5 mod load order
+   - Consider a prefix system or metadata-based approach
+   - Test with various UE5 mods
 
-5. **Add INI File Support**
-   - Configure relevant .ini files
-   - Set up profile-specific .ini handling
-   - Test with different game configurations
+5. **Refine Hybrid Mod Handling**
+   - Improve detection and handling of hybrid mods
+   - Add special handling for mods that require files to stay together
+   - Test with various hybrid mod configurations
 
-6. **Enhance User Interface**
-   - Add mod type indicators
-   - Implement filters for different mod types
-   - Improve conflict visualization for the dual modding system
+6. **Enhance Error Handling**
+   - Add more robust error handling
+   - Implement user-friendly error messages
+   - Add error recovery mechanisms
 
-7. **Testing and Refinement**
+7. **Comprehensive Testing**
    - Test with various mod configurations
-   - Optimize performance
-   - Refine user experience
+   - Test with different combinations of traditional and UE5 mods
+   - Test error handling and recovery
 
 ## Active Decisions and Considerations
 

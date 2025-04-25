@@ -2,7 +2,7 @@
 
 ## What Works
 
-As we are in the planning and initial implementation phase, we have made significant progress in understanding the requirements and planning the implementation, though no code has been written yet. Here's what we've accomplished:
+We have made significant progress in implementing the Oblivion Remastered plugin. Here's what we've accomplished:
 
 1. **Research and Analysis**
    - ✅ Explored MO2's plugin architecture
@@ -20,62 +20,72 @@ As we are in the planning and initial implementation phase, we have made signifi
    - ✅ Documented technical context and development setup
    - ✅ Established active context and detailed next steps
    - ✅ Created implementation plan with specific tasks
+   - ✅ Documented implementation details and issues
 
 3. **Design Decisions**
    - ✅ Selected Python-based approach using basic_games framework
    - ✅ Designed virtual file system mapping strategy
-   - ✅ Planned mod type detection approach
+   - ✅ Implemented mod type detection approach
    - ✅ Outlined load order management for both mod types
    - ✅ Identified INI file management requirements
 
+4. **Core Plugin Structure**
+   - ✅ Created the main `OblivionRemasteredGame` class
+   - ✅ Defined game-specific properties and paths
+   - ✅ Implemented game detection
+   - ✅ Set up basic integration with MO2
+
+5. **Dual Modding System Implementation**
+   - ✅ Created mod type detection logic
+   - ✅ Implemented virtual file system mapping for both mod types
+   - ✅ Developed custom installer logic for proper file placement
+   - ✅ Implemented basic handling for hybrid mods
+
+6. **Save Game Handling**
+   - ✅ Implemented save game detection and display
+   - ✅ Added support for extracting player name and other metadata
+   - ✅ Set up profile-specific saves
+
+7. **INI File Management**
+   - ✅ Configured relevant .ini files
+   - ✅ Set up profile-specific .ini handling
+
 ## What's Left to Build
 
-The entire implementation is still pending. Here's a detailed breakdown of what needs to be built:
+While we've made significant progress, there are still several key features and improvements needed:
 
-1. **Core Plugin Structure**
-   - ⬜ Create the main `OblivionRemasteredGame` class
-   - ⬜ Define game-specific properties and paths
-   - ⬜ Implement game detection
-   - ⬜ Set up basic integration with MO2
+1. **Traditional Bethesda Mod Support**
+   - ✅ Implemented .esp/.bsa file detection and placement
+   - ⬜ Fix `Plugins.txt` management (currently not working)
+   - ⬜ Implement reliable load order handling for traditional mods
 
-2. **Dual Modding System Implementation**
-   - ⬜ Create mod type detection logic
-   - ⬜ Implement virtual file system mapping for both mod types
-   - ⬜ Develop custom installer logic for proper file placement
-   - ⬜ Handle hybrid mods that contain both traditional and UE5 components
-
-3. **Traditional Bethesda Mod Support**
-   - ⬜ Implement .esp/.esm plugin management
-   - ⬜ Set up BSA handling
-   - ⬜ Configure `Plugins.txt` management
-   - ⬜ Implement load order handling for traditional mods
-   - ⬜ Set up save game handling
-
-4. **Unreal Engine Asset Support**
-   - ⬜ Implement .pak/.ucas/.utoc file handling
-   - ⬜ Develop alphabetical load order management
+2. **Unreal Engine Asset Support**
+   - ✅ Implemented .pak/.ucas/.utoc file handling
+   - ⬜ Develop better alphabetical load order management
    - ⬜ Implement prefix system for controlling load order (if needed)
-   - ⬜ Handle UE5 mod conflicts
 
-5. **INI File Management**
-   - ⬜ Configure relevant .ini files
-   - ⬜ Set up profile-specific .ini handling
-   - ⬜ Implement INI tweaks support
-   - ⬜ Handle UE5-specific configuration files (if any)
+3. **Callback System**
+   - ⬜ Fix mod state change detection (currently not working)
+   - ⬜ Implement reliable callback for updating Plugins.txt
 
-6. **User Interface Enhancements**
+4. **Logging and Debugging**
+   - ✅ Implemented basic custom logging
+   - ⬜ Improve integration with MO2's logging system
+   - ⬜ Add more comprehensive error handling and reporting
+
+5. **User Interface Enhancements**
    - ⬜ Add mod type indicators
    - ⬜ Implement filters for different mod types
    - ⬜ Enhance conflict visualization for dual modding system
    - ⬜ Create custom UI elements for UE5 mod management (if needed)
 
-7. **Testing and Refinement**
+6. **Testing and Refinement**
    - ⬜ Test with various mod configurations
    - ⬜ Test with different combinations of traditional and UE5 mods
    - ⬜ Optimize performance
    - ⬜ Refine user interface and experience
 
-8. **Documentation**
+7. **Documentation**
    - ⬜ Create user documentation
    - ⬜ Write installation and setup instructions
    - ⬜ Provide guidance on managing dual modding system
@@ -83,7 +93,7 @@ The entire implementation is still pending. Here's a detailed breakdown of what 
 
 ## Current Status
 
-**Overall Status**: Planning and Initial Implementation Phase
+**Overall Status**: Initial Implementation Phase with Critical Issues
 
 **Progress by Component**:
 
@@ -92,52 +102,52 @@ The entire implementation is still pending. Here's a detailed breakdown of what 
 | Research and Analysis              | Completed   | 100%     |
 | Documentation                      | Completed   | 100%     |
 | Design Decisions                   | Completed   | 100%     |
-| Core Plugin Structure              | Not Started | 0%       |
-| Dual Modding System Implementation | Not Started | 0%       |
-| Traditional Bethesda Mod Support   | Not Started | 0%       |
-| Unreal Engine Asset Support        | Not Started | 0%       |
-| INI File Management                | Not Started | 0%       |
+| Core Plugin Structure              | Completed   | 100%     |
+| Dual Modding System Implementation | Completed   | 90%      |
+| Traditional Bethesda Mod Support   | In Progress | 60%      |
+| Unreal Engine Asset Support        | Completed   | 80%      |
+| Save Game Handling                 | Completed   | 100%     |
+| INI File Management                | Completed   | 90%      |
+| Callback System                    | Not Working | 20%      |
 | User Interface Enhancements        | Not Started | 0%       |
-| Testing and Refinement             | Not Started | 0%       |
+| Testing and Refinement             | In Progress | 30%      |
 | User Documentation                 | Not Started | 0%       |
 
 **Current Focus**:
-- Implementing the core plugin structure
-- Developing mod type detection logic
-- Creating custom installer for proper file placement
+- Fixing the Plugins.txt update issue
+- Resolving mod state change detection problems
+- Improving logging and debugging capabilities
 
 ## Known Issues
 
-As we are in the planning phase, there are no implementation issues yet. However, we have identified the following potential challenges that will need to be addressed:
+We have identified several critical issues that need to be addressed:
 
-1. **Dual Modding System Complexity**
-   - Handling two different modding systems (traditional + UE5) adds complexity
-   - Need to ensure proper file placement for each mod type
-   - May require custom UI elements to distinguish between mod types
-   - Could present challenges for MO2's virtual file system
+1. **Plugins.txt Not Being Updated**
+   - The Plugins.txt file is not being automatically updated when mods are enabled or disabled
+   - This is critical for traditional Bethesda mods to be recognized by the game
+   - Currently investigating why the callback is not working
 
-2. **Mod Type Detection Accuracy**
-   - Accurately detecting whether a mod is traditional, UE5, or hybrid is crucial
-   - Some mods might not follow standard patterns
-   - User intervention might be needed for ambiguous cases
-   - Need to handle edge cases gracefully
+2. **Mod State Change Detection Not Working**
+   - The `onModStateChanged` callback is not being triggered or is not working as expected
+   - This prevents automatic updates of the Plugins.txt file and other state-dependent features
+   - Custom logging has been implemented to diagnose the issue
 
-3. **UE5 Load Order Management**
+3. **Logging Challenges**
+   - Standard print statements are not being captured by MO2's logging system
+   - Custom logging to a file has been implemented as a workaround
+   - Need to explore better integration with MO2's logging system
+
+4. **UE5 Load Order Management**
    - UE5 mods are loaded alphabetically, which limits control
-   - Implementing a prefix system might be confusing for users
-   - Need to balance user control with simplicity
-   - May require clear documentation and UI indicators
+   - No custom load order management has been implemented yet
+   - Need to develop a system for controlling UE5 mod load order
 
-4. **INI File Management**
-   - Oblivion Remaster has multiple .ini files in different locations
-   - Need to identify all relevant configuration files
-   - Must ensure proper handling of profile-specific settings
-   - May need to handle UE5-specific configuration files differently
+5. **Hybrid Mod Handling**
+   - Basic hybrid mod handling is implemented
+   - More sophisticated handling may be needed for certain mod types
+   - No user interface indication of hybrid mods
 
-5. **Performance Considerations**
-   - Handling dual modding systems might impact performance
-   - Need to optimize file operations, especially for large mod collections
-   - Must ensure responsive UI even with complex mod setups
+For a detailed breakdown of these issues and potential solutions, see the `memory-bank/implementation/issues.md` file.
 
 ## Evolution of Project Decisions
 
