@@ -257,6 +257,9 @@ class OblivionRemasteredGame(BasicGame):
         except Exception:
             pass
         
+        # We don't register a callback to update the Plugins.txt file automatically
+        # because it might cause issues with MO2
+        
         return True
     
     def _extract_player_name(self, filename: str):
@@ -413,7 +416,102 @@ class OblivionRemasteredGame(BasicGame):
                     # If anything goes wrong, just create an empty file
                     Path(target_path).touch()
         
+        # Handle Plugins.txt file
+        if settings & mobase.ProfileSetting.MODS:
+            # Get the path to the Plugins.txt file
+            plugins_path = os.path.join(
+                self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData", "Data", "Plugins.txt"
+            )
+            
+            # Create a profile-specific Plugins.txt file
+            profile_plugins_path = os.path.join(directory.absolutePath(), "Plugins.txt")
+            
+            try:
+                # Copy the Plugins.txt file if it exists
+                if os.path.exists(plugins_path):
+                    shutil.copyfile(plugins_path, profile_plugins_path)
+                else:
+                    # Create an empty file with the primary plugins if the source doesn't exist
+                    with open(profile_plugins_path, 'w') as f:
+                        f.write("Oblivion.esm\n")
+            except Exception:
+                # If anything goes wrong, just create an empty file with the primary plugins
+                with open(profile_plugins_path, 'w') as f:
+                    f.write("Oblivion.esm\n")
+        
         super().initializeProfile(directory, settings)
+    
+    def readPluginsList(self):
+        """Read the Plugins.txt file and return a list of enabled plugins."""
+        # Get the path to the Plugins.txt file
+        plugins_path = os.path.join(
+            self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData", "Data", "Plugins.txt"
+        )
+        
+        # Check if the file exists
+        if not os.path.exists(plugins_path):
+            return ["Oblivion.esm"]  # Return default primary plugin if file doesn't exist
+        
+        # Read the file and return the list of plugins
+        with open(plugins_path, 'r') as f:
+            plugins = [line.strip() for line in f.readlines() if line.strip() and not line.strip().startswith('#')]
+        
+        return plugins
+    
+    def writePluginsList(self, plugins):
+        """Write the list of enabled plugins to the Plugins.txt file."""
+        # Get the path to the Plugins.txt file
+        plugins_path = os.path.join(
+            self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData", "Data", "Plugins.txt"
+        )
+        
+        # Write the plugins to the file
+        with open(plugins_path, 'w') as f:
+            for plugin in plugins:
+                f.write(f"{plugin}\n")
+    
+    def updatePluginsList(self):
+        """Update the Plugins.txt file based on the current state of the mods."""
+        try:
+            # Get the primary plugins (always enabled)
+            plugins = ["Oblivion.esm"]
+            
+            # Get a list of all active mods
+            try:
+                active_mods = []
+                for mod_name in self._organizer.modList().allModsByProfilePriority():
+                    try:
+                        if self._organizer.modList().state(mod_name) & mobase.ModState.ACTIVE:
+                            active_mods.append(mod_name)
+                    except Exception:
+                        pass
+                
+                # Find all ESP files in the active mods
+                for mod_name in active_mods:
+                    try:
+                        mod_path = os.path.join(self._organizer.modsPath(), mod_name)
+                        bethesda_path = os.path.join(mod_path, "Dev", "ObvData", "Data")
+                        
+                        if os.path.exists(bethesda_path):
+                            for file in os.listdir(bethesda_path):
+                                if file.lower().endswith(".esp"):
+                                    plugins.append(file)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+            
+            # Get the path to the Plugins.txt file
+            plugins_path = os.path.join(
+                self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData", "Data", "Plugins.txt"
+            )
+            
+            # Update the Plugins.txt file
+            self.writePluginsList(plugins)
+            
+            return True
+        except Exception:
+            return False
 
 
 def createPlugin():
