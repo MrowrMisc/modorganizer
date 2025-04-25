@@ -161,6 +161,7 @@ class OblivionRemasteredGame(BasicGame):
     # GameDataPath = "OblivionRemastered/Content/Paks/~mods"
     GameIniFiles = ["Oblivion.ini", "Oblivion_default.ini", "BlendSettings.ini"]
     GameDocumentsDirectory = "%GAME_PATH%/OblivionRemastered/Content/Dev/ObvData"
+    GameSaveExtension = "sav"
     
     def init(self, organizer: mobase.IOrganizer):
         super().init(organizer)
@@ -178,6 +179,12 @@ class OblivionRemasteredGame(BasicGame):
                 QFileInfo(self.gameDirectory().absoluteFilePath(self.GameLauncher))
             )
         ]
+    
+    def savesDirectory(self):
+        return os.path.join(
+            os.environ["USERPROFILE"], 
+            "Documents", "My Games", "Oblivion Remastered", "Saved", "SaveGames"
+        )
     
     def initializeProfile(self, directory: QDir, settings: mobase.ProfileSetting):
         # Create the mods directories if they don't exist
