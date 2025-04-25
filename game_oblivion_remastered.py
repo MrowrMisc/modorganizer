@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 
 import mobase
@@ -279,10 +280,10 @@ class OblivionRemasteredGame(BasicGame):
         except Exception:
             return None
     
-    def documentsDirectory(self):
-        """Override the documents directory method to explicitly point to the correct path for INI files."""
-        # This is where MO2 will look for INI files
-        return QDir(os.path.join(self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData"))
+    # def documentsDirectory(self):
+    #     """Override the documents directory method to explicitly point to the correct path for INI files."""
+    #     # This is where MO2 will look for INI files
+    #     return QDir(os.path.join(self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData"))
     
     def savesDirectory(self):
         """Override the saves directory method to explicitly point to the correct path."""
@@ -396,7 +397,30 @@ class OblivionRemasteredGame(BasicGame):
         saves_path = os.path.join(directory.absolutePath(), "saves")
         if not os.path.exists(saves_path):
             os.makedirs(saves_path, exist_ok=True)
+        
+        # Handle profile-specific INI files
+        if settings & mobase.ProfileSetting.CONFIGURATION:
+            # Get the path to the INI files directory
+            ini_path = os.path.join(
+                self.gameDirectory().absolutePath(), "OblivionRemastered", "Content", "Dev", "ObvData"
+            )
             
+            # Copy each INI file to the profile directory
+            for ini_file in self.GameIniFiles:
+                source_path = os.path.join(ini_path, ini_file)
+                target_path = directory.absoluteFilePath(ini_file)
+                
+                try:
+                    # Copy the INI file if it exists
+                    if os.path.exists(source_path):
+                        shutil.copyfile(source_path, target_path)
+                    else:
+                        # Create an empty file if the source doesn't exist
+                        Path(target_path).touch()
+                except Exception:
+                    # If anything goes wrong, just create an empty file
+                    Path(target_path).touch()
+        
         super().initializeProfile(directory, settings)
 
 
